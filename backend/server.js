@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
@@ -9,7 +9,7 @@ const orderRoutes = require("./routes/orderRoutes");
 
 const authRoutes = require("./routes/authRoutes");
 
-dotenv.config();
+ require("dotenv").config();
 
 const app = express();
 
