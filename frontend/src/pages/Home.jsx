@@ -25,7 +25,7 @@ function Home() {
   const fetchPizzas = async () => {
     try {
       const response = await axios.get(
-        "https://pizza-palace-3-918y.onrender.com/api/pizzas"
+        "https://pizza-palace-4.onrender.com/api/pizzas"
       );
 
       setPizzas(response.data.pizzas);
