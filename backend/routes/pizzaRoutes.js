@@ -5,7 +5,7 @@ const {
   createPizza,
   updatePizza,
   deletePizza,
-} = require("../controllers/pizzaController");
+} = require("../controllers/pizzacontroller");
 
 const verifyToken = require("../middleware/verifyToken");
 const isAdmin = require("../middleware/isAdmin");
