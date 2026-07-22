@@ -1,170 +1,204 @@
 import { useEffect, useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import axios from "axios";
+import { Link } from "react-router-dom";
 import PizzaCard from "../components/PizzaCard";
 import { CartContext } from "../context/CartContext";
 
 function Home() {
-  const [pizzas, setPizzas] = useState([]);
-  const [category, setCategory] = useState("all");
-  const [search, setSearch] = useState("");
 
-  const { cart } = useContext(CartContext);
-  const navigate = useNavigate();
+const [pizzas, setPizzas] = useState([]);
+const [category, setCategory] = useState("all");
+const [search, setSearch] = useState("");
 
-  const user = JSON.parse(localStorage.getItem("user"));
+const { cart } = useContext(CartContext);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("cart");
+const user = JSON.parse(
+localStorage.getItem("user")
+);
 
-    navigate("/login");
-  };
+const handleLogout = () => {
+localStorage.removeItem("token");
+localStorage.removeItem("user");
 
-  const fetchPizzas = async () => {
-    try {
-      const { data } = await api.get("/pizzas");
-      setPizzas(data.pizzas || []);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
-  useEffect(() => {
-    fetchPizzas();
-  }, []);
+window.location.href = "/login";
 
-  const filteredPizzas = pizzas.filter((pizza) => {
-    const categoryMatch =
-      category === "all" || pizza.category === category;
 
-    const searchMatch = pizza.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
+};
 
-    return categoryMatch && searchMatch;
-  });
+const fetchPizzas = async () => {
+try {
 
-  return (
-    <div className="bg-gray-100 min-h-screen">
 
-      {/* Navbar */}
-      <div className="bg-black text-white py-5 px-5 md:px-10 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
+  const response = await axios.get(
+    "https://pizza-palace-6.onrender.com/api/pizzas"
+  );
 
-        <h1 className="text-3xl font-bold text-orange-500">
-          Pizza Palace 🍕
-        </h1>
+  setPizzas(response.data.pizzas);
 
-        <div className="flex flex-wrap justify-center items-center gap-3">
+} catch (error) {
+  console.log(error);
+}
 
-          <h2 className="text-lg">
-            Welcome {user?.name || "Guest"} 👋
-          </h2>
 
-          <Link to="/cart">
-            <button className="bg-orange-500 px-5 py-2 rounded-lg hover:bg-orange-600">
-              Cart ({cart.length})
-            </button>
-          </Link>
+};
 
-          <Link to="/orders">
-            <button className="bg-blue-500 px-5 py-2 rounded-lg hover:bg-blue-600">
-              My Orders
-            </button>
-          </Link>
+useEffect(() => {
+fetchPizzas();
+}, []);
 
-          <Link to="/admin">
-            <button className="bg-purple-500 px-5 py-2 rounded-lg hover:bg-purple-600">
-              Admin
-            </button>
-          </Link>
+const filteredPizzas = pizzas.filter((pizza) => {
 
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 px-5 py-2 rounded-lg hover:bg-red-600"
-          >
-            Logout
-          </button>
+const categoryMatch =
+  category === "all" ||
+  pizza.category === category;
 
-        </div>
-      </div>
+const searchMatch =
+  pizza.name
+    .toLowerCase()
+    .includes(search.toLowerCase());
 
-      {/* Search */}
-      <div className="p-4">
-        <input
-          type="text"
-          placeholder="Search Pizza 🍕"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border p-3 rounded-lg w-full bg-white"
-        />
-      </div>
+return categoryMatch && searchMatch;
 
-      {/* Category Filter */}
-      <div className="flex flex-wrap gap-4 px-4 mb-8">
-        <button
-          onClick={() => setCategory("all")}
-          className={`px-4 py-2 rounded text-white ${
-            category === "all" ? "bg-gray-800" : "bg-black"
-          }`}
-        >
-          All
+
+});
+
+return ( <div className="bg-gray-100 min-h-screen">
+
+  {/* Navbar */}
+  <div className="bg-black text-white py-5 px-6 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
+
+    <h1 className="text-3xl font-bold text-orange-500">
+      Pizza Palace 🍕
+    </h1>
+
+    <div className="flex flex-wrap justify-center items-center gap-3">
+
+      <h2 className="text-lg">
+        Welcome {user?.name} 👋
+      </h2>
+
+      <Link to="/cart">
+        <button className="bg-orange-500 px-5 py-2 rounded-lg hover:bg-orange-600">
+          Cart ({cart.length})
         </button>
+      </Link>
 
-        <button
-          onClick={() => setCategory("veg")}
-          className={`px-4 py-2 rounded text-white ${
-            category === "veg" ? "bg-green-700" : "bg-green-500"
-          }`}
-        >
-          Veg
+      <Link to="/orders">
+        <button className="bg-blue-500 px-5 py-2 rounded-lg hover:bg-blue-600">
+          My Orders
         </button>
+      </Link>
 
-        <button
-          onClick={() => setCategory("non-veg")}
-          className={`px-4 py-2 rounded text-white ${
-            category === "non-veg" ? "bg-red-700" : "bg-red-500"
-          }`}
-        >
-          Non-Veg
-        </button>
-      </div>
+      <Link to="/admin">
+  <button className="bg-purple-500 px-5 py-2 rounded-lg hover:bg-purple-600">
+    Admin
+  </button>
+</Link>
 
-      {/* Pizza Section */}
-      <div className="p-4 md:p-10">
-
-        <h2 className="text-4xl font-bold mb-4 text-gray-800">
-          Our Delicious Pizzas
-        </h2>
-
-        <p className="mb-6 text-gray-600 font-medium">
-          {filteredPizzas.length} pizza(s) found
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-
-          {filteredPizzas.length > 0 ? (
-            filteredPizzas.map((pizza) => (
-              <PizzaCard
-                key={pizza._id}
-                pizza={pizza}
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center">
-              <h2 className="text-2xl font-bold text-gray-500">
-                No pizzas found 🍕
-              </h2>
-            </div>
-          )}
-
-        </div>
-
-      </div>
+      <button
+        onClick={handleLogout}
+        className="bg-red-500 px-5 py-2 rounded-lg hover:bg-red-600"
+      >
+        Logout
+      </button>
 
     </div>
-  );
+
+  </div>
+
+  {/* Search */}
+  <div className="p-4">
+
+    <input
+      type="text"
+      placeholder="Search Pizza 🍕"
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      className="border p-3 rounded-lg w-full "
+    />
+
+  </div>
+
+  {/* Category Filter */}
+  <div className="flex gap-4 px-4 mb-8">
+
+    <button
+      onClick={() => setCategory("all")}
+      className={`px-4 py-2 rounded text-white ${
+        category === "all"
+          ? "bg-gray-800"
+          : "bg-black"
+      }`}
+    >
+      All
+    </button>
+
+    <button
+      onClick={() => setCategory("veg")}
+      className={`px-4 py-2 rounded text-white ${
+        category === "veg"
+          ? "bg-green-700"
+          : "bg-green-500"
+      }`}
+    >
+      Veg
+    </button>
+
+    <button
+      onClick={() => setCategory("non-veg")}
+      className={`px-4 py-2 rounded text-white ${
+        category === "non-veg"
+          ? "bg-red-700"
+          : "bg-red-500"
+      }`}
+    >
+      Non-Veg
+    </button>
+
+  </div>
+
+  {/* Pizza Section */}
+  <div className="p-10">
+
+    <h2 className="text-4xl font-bold mb-4 text-gray-800">
+      Our Delicious Pizzas
+    </h2>
+
+    <p className="mb-6 text-gray-600 font-medium">
+      {filteredPizzas.length} pizza(s) found
+    </p>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+
+      {filteredPizzas.length > 0 ? (
+
+        filteredPizzas.map((pizza) => (
+          <PizzaCard
+            key={pizza._id}
+            pizza={pizza}
+          />
+        ))
+
+      ) : (
+
+        <div className="col-span-full text-center">
+
+          <h2 className="text-2xl font-bold text-gray-500">
+            No pizzas found 🍕
+          </h2>
+
+        </div>
+
+      )}
+
+    </div>
+
+  </div>
+
+</div>
+
+);
 }
 
 export default Home;

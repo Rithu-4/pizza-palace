@@ -1,10 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import api from "../api/axios";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Register() {
-  const navigate = useNavigate();
-
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -13,17 +11,21 @@ function Register() {
     e.preventDefault();
 
     try {
-      const { data } = await api.post("/auth/register", {
-        name,
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "https://pizza-palace-6.onrender.com/api/auth/register",
+        {
+          name,
+          email,
+          password,
+        }
+      );
 
-      alert(data.message);
-      navigate("/login");
+      alert(response.data.message);
+
+      // Redirect to login page
+      window.location.href = "/login";
+
     } catch (error) {
-      console.error(error);
-
       alert(
         error.response?.data?.message ||
         "Registration failed"
@@ -33,10 +35,12 @@ function Register() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+
       <form
         onSubmit={handleRegister}
         className="bg-white p-10 rounded-2xl shadow-lg w-100"
       >
+
         <h1 className="text-4xl font-bold text-center text-orange-500 mb-8">
           Register 🍕
         </h1>
@@ -47,7 +51,6 @@ function Register() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full border p-3 rounded-lg mb-5 outline-none"
-          required
         />
 
         <input
@@ -56,7 +59,6 @@ function Register() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full border p-3 rounded-lg mb-5 outline-none"
-          required
         />
 
         <input
@@ -65,7 +67,6 @@ function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full border p-3 rounded-lg mb-5 outline-none"
-          required
         />
 
         <button
@@ -84,7 +85,9 @@ function Register() {
             Login
           </Link>
         </p>
+
       </form>
+
     </div>
   );
 }

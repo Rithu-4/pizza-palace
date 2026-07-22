@@ -1,38 +1,21 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { CartContext } from "../context/CartContext";
-import api from "../api/axios";
 
 function Checkout() {
+
   const { cart, setCart } = useContext(CartContext);
-  const navigate = useNavigate();
 
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
-  const [loading, setLoading] = useState(false);
 
   const handlePlaceOrder = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem("user"));
 
-      if (!user) {
-        alert("Please login first.");
-        navigate("/login");
-        return;
-      }
-
-      if (cart.length === 0) {
-        alert("Your cart is empty.");
-        return;
-      }
-
-      if (!address.trim() || !phoneNumber.trim()) {
-        alert("Please fill in all fields.");
-        return;
-      }
-
-      setLoading(true);
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
 
       const totalPrice = cart.reduce(
         (total, item) =>
@@ -40,46 +23,46 @@ function Checkout() {
         0
       );
 
-      const { data } = await api.post("/orders", {
-        userId: user._id || user.id,
-        items: cart,
-        totalPrice,
-        address,
-        phoneNumber,
-        paymentMethod,
-      });
+      const response = await axios.post(
+        "https://pizza-palace-6.onrender.com/api/orders",
+        {
+          userId: user.id,
+          items: cart,
+          totalPrice,
+          address,
+          phoneNumber,
+          paymentMethod,
+        }
+      );
 
       if (paymentMethod === "ONLINE") {
         alert("Payment Successful ✅");
       }
 
-      alert(data.message);
+      alert(response.data.message);
 
-      // Clear cart
       setCart([]);
-      localStorage.removeItem("cart");
 
-      // Redirect
-      navigate("/");
+      window.location.href = "/";
+
     } catch (error) {
-      console.error(error);
 
       alert(
         error.response?.data?.message ||
         "Order failed"
       );
-    } finally {
-      setLoading(false);
+
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
-      <h1 className="text-4xl font-bold mb-8 text-center">
+
+      <h1 className="text-4xl font-bold mb-8">
         Checkout 🍕
       </h1>
 
-      <div className="bg-white p-6 rounded-xl shadow-md max-w-lg mx-auto">
+      <div className="bg-white p-6 rounded-xl shadow-md">
 
         <input
           type="text"
@@ -102,19 +85,24 @@ function Checkout() {
           onChange={(e) => setPaymentMethod(e.target.value)}
           className="w-full border p-3 rounded-lg mb-4"
         >
-          <option value="COD">Cash On Delivery</option>
-          <option value="ONLINE">Online Payment</option>
+          <option value="COD">
+            Cash On Delivery
+          </option>
+
+          <option value="ONLINE">
+            Online Payment
+          </option>
         </select>
 
         <button
           onClick={handlePlaceOrder}
-          disabled={loading}
-          className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 disabled:bg-gray-400"
+          className="bg-orange-500 text-white px-6 py-3 rounded-lg"
         >
-          {loading ? "Placing Order..." : "Place Order"}
+          Place Order
         </button>
 
       </div>
+
     </div>
   );
 }
