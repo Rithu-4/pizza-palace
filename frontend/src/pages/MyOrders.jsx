@@ -14,11 +14,18 @@ function MyOrders() {
           return;
         }
 
-        const { data } = await api.get(`/orders/${user.id}`);
+        const { data } = await api.get(
+          `/orders/${user._id || user.id}`
+        );
 
         setOrders(data.orders);
       } catch (error) {
         console.error(error);
+
+        alert(
+          error.response?.data?.message ||
+          "Failed to fetch orders"
+        );
       }
     };
 
@@ -30,16 +37,18 @@ function MyOrders() {
       await api.delete(`/orders/${id}`);
 
       setOrders((prevOrders) =>
-        prevOrders.filter((order) => order._id !== id)
+        prevOrders.filter(
+          (order) => order._id !== id
+        )
       );
 
-      alert("Order deleted successfully");
+      alert("Order cancelled successfully");
     } catch (error) {
       console.error(error);
 
       alert(
         error.response?.data?.message ||
-        error.message
+        "Failed to cancel order"
       );
     }
   };
@@ -51,7 +60,11 @@ function MyOrders() {
       </h1>
 
       {orders.length === 0 ? (
-        <p>No orders found.</p>
+        <div className="bg-white p-6 rounded-xl shadow text-center">
+          <p className="text-gray-500 text-lg">
+            No orders found.
+          </p>
+        </div>
       ) : (
         <div className="space-y-5">
           {orders.map((order) => (
@@ -59,30 +72,47 @@ function MyOrders() {
               key={order._id}
               className="bg-white p-5 rounded-xl shadow-md"
             >
-              <h2 className="text-2xl font-bold">
-                Order ID:
+              <h2 className="text-xl font-bold mb-2">
+                Order ID
               </h2>
 
-              <p>{order._id}</p>
-
-              <p className="mt-2">
-                Total: ₹{order.totalPrice}
+              <p className="break-all">
+                {order._id}
               </p>
 
-              <p
-                className={
-                  order.status === "Pending"
-                    ? "text-yellow-500 font-bold"
-                    : "text-green-500 font-bold"
-                }
-              >
-                {order.status === "Pending"
-                  ? "⏳ Pending"
-                  : "✅ Delivered"}
+              <p className="mt-3">
+                <strong>Total:</strong> ₹
+                {order.totalPrice}
               </p>
 
               <p>
-                Address: {order.address}
+                <strong>Address:</strong>{" "}
+                {order.address}
+              </p>
+
+              <p>
+                <strong>Phone:</strong>{" "}
+                {order.phoneNumber}
+              </p>
+
+              <p className="mt-2">
+                <strong>Status:</strong>{" "}
+                <span
+                  className={
+                    order.status === "Pending"
+                      ? "text-yellow-500 font-bold"
+                      : order.status === "Preparing"
+                      ? "text-blue-500 font-bold"
+                      : "text-green-600 font-bold"
+                  }
+                >
+                  {order.status === "Pending" &&
+                    "⏳ Pending"}
+                  {order.status === "Preparing" &&
+                    "👨‍🍳 Preparing"}
+                  {order.status === "Delivered" &&
+                    "✅ Delivered"}
+                </span>
               </p>
 
               {order.status === "Pending" && (
@@ -90,7 +120,7 @@ function MyOrders() {
                   onClick={() =>
                     handleDeleteOrder(order._id)
                   }
-                  className="bg-red-500 text-white px-4 py-2 rounded mt-3 hover:bg-red-600"
+                  className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600"
                 >
                   Cancel Order
                 </button>

@@ -10,6 +10,7 @@ function Checkout() {
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [loading, setLoading] = useState(false);
 
   const handlePlaceOrder = async () => {
     try {
@@ -30,6 +31,8 @@ function Checkout() {
         alert("Please fill in all fields.");
         return;
       }
+
+      setLoading(true);
 
       const totalPrice = cart.reduce(
         (total, item) =>
@@ -56,7 +59,7 @@ function Checkout() {
       setCart([]);
       localStorage.removeItem("cart");
 
-      // Redirect to Home
+      // Redirect
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -65,16 +68,19 @@ function Checkout() {
         error.response?.data?.message ||
         "Order failed"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
-      <h1 className="text-4xl font-bold mb-8">
+      <h1 className="text-4xl font-bold mb-8 text-center">
         Checkout 🍕
       </h1>
 
       <div className="bg-white p-6 rounded-xl shadow-md max-w-lg mx-auto">
+
         <input
           type="text"
           placeholder="Enter Address"
@@ -102,10 +108,12 @@ function Checkout() {
 
         <button
           onClick={handlePlaceOrder}
-          className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600"
+          disabled={loading}
+          className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600 disabled:bg-gray-400"
         >
-          Place Order
+          {loading ? "Placing Order..." : "Place Order"}
         </button>
+
       </div>
     </div>
   );

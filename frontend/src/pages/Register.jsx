@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-
-const API_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://pizza-palace-6.onrender.com/api";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../api/axios";
 
 function Register() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,17 +13,16 @@ function Register() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${API_URL}/users`, {
+      const { data } = await api.post("/auth/register", {
         name,
         email,
         password,
       });
 
-      alert(response.data.message);
-
-      window.location.href = "/login";
+      alert(data.message);
+      navigate("/login");
     } catch (error) {
-      console.log(error.response?.data);
+      console.error(error);
 
       alert(
         error.response?.data?.message ||
@@ -50,6 +47,7 @@ function Register() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="w-full border p-3 rounded-lg mb-5 outline-none"
+          required
         />
 
         <input
@@ -58,6 +56,7 @@ function Register() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full border p-3 rounded-lg mb-5 outline-none"
+          required
         />
 
         <input
@@ -66,6 +65,7 @@ function Register() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="w-full border p-3 rounded-lg mb-5 outline-none"
+          required
         />
 
         <button
@@ -77,7 +77,10 @@ function Register() {
 
         <p className="text-center mt-5">
           Already have an account?{" "}
-          <Link to="/login" className="text-orange-500 font-semibold">
+          <Link
+            to="/login"
+            className="text-orange-500 font-semibold"
+          >
             Login
           </Link>
         </p>

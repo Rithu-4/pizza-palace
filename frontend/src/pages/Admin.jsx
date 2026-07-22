@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 function Admin() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState("");
@@ -14,6 +17,14 @@ function Admin() {
   const [adding, setAdding] = useState(false);
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+      alert("Please login first.");
+      navigate("/login");
+      return;
+    }
+
     fetchPizzas();
     fetchOrders();
   }, []);
@@ -46,7 +57,10 @@ function Admin() {
       fetchOrders();
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to update order");
+      alert(
+        error.response?.data?.message ||
+        "Failed to update order"
+      );
     }
   };
 
@@ -76,7 +90,11 @@ function Admin() {
       fetchPizzas();
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to add pizza");
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to add pizza"
+      );
     } finally {
       setAdding(false);
     }
@@ -90,10 +108,14 @@ function Admin() {
 
       alert("Pizza deleted successfully");
 
-      setPizzas((prev) => prev.filter((pizza) => pizza._id !== id));
+      fetchPizzas();
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.message || "Failed to delete pizza");
+
+      alert(
+        error.response?.data?.message ||
+        "Failed to delete pizza"
+      );
     }
   };
 
@@ -103,8 +125,6 @@ function Admin() {
       <h1 className="text-4xl font-bold mb-8">
         Admin Dashboard 👨‍🍳
       </h1>
-
-      {/* Add Pizza */}
 
       <div className="bg-white p-6 rounded-xl shadow-md max-w-lg">
 
@@ -152,8 +172,6 @@ function Admin() {
 
       </div>
 
-      {/* Orders */}
-
       <h2 className="text-3xl font-bold mt-10 mb-5">
         Order Management 📦
       </h2>
@@ -187,8 +205,6 @@ function Admin() {
         </div>
       )}
 
-      {/* Pizza Catalogue */}
-
       <h2 className="text-3xl font-bold mt-10 mb-5">
         Pizza Catalogue 🍕
       </h2>
@@ -205,12 +221,17 @@ function Admin() {
               className="bg-white p-4 rounded-lg shadow flex justify-between items-center"
             >
               <div>
-                <h3 className="font-bold text-xl">{pizza.name}</h3>
+                <h3 className="font-bold text-xl">
+                  {pizza.name}
+                </h3>
+
                 <p>{pizza.category}</p>
               </div>
 
               <button
-                onClick={() => handleDeletePizza(pizza._id)}
+                onClick={() =>
+                  handleDeletePizza(pizza._id)
+                }
                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
               >
                 Delete
