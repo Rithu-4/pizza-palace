@@ -17,10 +17,16 @@ function Checkout() {
 
       if (!user) {
         alert("Please login first.");
+        navigate("/login");
         return;
       }
 
-      if (!address || !phoneNumber) {
+      if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+      }
+
+      if (!address.trim() || !phoneNumber.trim()) {
         alert("Please fill in all fields.");
         return;
       }
@@ -32,7 +38,7 @@ function Checkout() {
       );
 
       const { data } = await api.post("/orders", {
-        userId: user.id || user._id,
+        userId: user._id || user.id,
         items: cart,
         totalPrice,
         address,
@@ -46,8 +52,11 @@ function Checkout() {
 
       alert(data.message);
 
+      // Clear cart
       setCart([]);
+      localStorage.removeItem("cart");
 
+      // Redirect to Home
       navigate("/");
     } catch (error) {
       console.error(error);
@@ -65,7 +74,7 @@ function Checkout() {
         Checkout 🍕
       </h1>
 
-      <div className="bg-white p-6 rounded-xl shadow-md">
+      <div className="bg-white p-6 rounded-xl shadow-md max-w-lg mx-auto">
         <input
           type="text"
           placeholder="Enter Address"
@@ -93,7 +102,7 @@ function Checkout() {
 
         <button
           onClick={handlePlaceOrder}
-          className="bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600"
+          className="w-full bg-orange-500 text-white py-3 rounded-lg hover:bg-orange-600"
         >
           Place Order
         </button>

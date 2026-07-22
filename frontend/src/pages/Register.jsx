@@ -2,6 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  "https://pizza-palace-6.onrender.com/api";
+
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -11,21 +15,18 @@ function Register() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users",
-        {
-          name,
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(`${API_URL}/users`, {
+        name,
+        email,
+        password,
+      });
 
       alert(response.data.message);
 
-      // Redirect to login page
       window.location.href = "/login";
-
     } catch (error) {
+      console.log(error.response?.data);
+
       alert(
         error.response?.data?.message ||
         "Registration failed"
@@ -35,12 +36,10 @@ function Register() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
-
       <form
         onSubmit={handleRegister}
         className="bg-white p-10 rounded-2xl shadow-lg w-100"
       >
-
         <h1 className="text-4xl font-bold text-center text-orange-500 mb-8">
           Register 🍕
         </h1>
@@ -78,16 +77,11 @@ function Register() {
 
         <p className="text-center mt-5">
           Already have an account?{" "}
-          <Link
-            to="/login"
-            className="text-orange-500 font-semibold"
-          >
+          <Link to="/login" className="text-orange-500 font-semibold">
             Login
           </Link>
         </p>
-
       </form>
-
     </div>
   );
 }

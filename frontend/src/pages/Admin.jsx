@@ -10,52 +10,55 @@ function Admin() {
   const [pizzas, setPizzas] = useState([]);
   const [orders, setOrders] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+  const [adding, setAdding] = useState(false);
+
   useEffect(() => {
     fetchPizzas();
     fetchOrders();
   }, []);
 
-  // Fetch all pizzas
   const fetchPizzas = async () => {
     try {
       const { data } = await api.get("/pizzas");
-      setPizzas(data.pizzas);
+      setPizzas(data.pizzas || []);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Fetch all orders
   const fetchOrders = async () => {
     try {
       const { data } = await api.get("/orders");
-      setOrders(data.orders);
+      setOrders(data.orders || []);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // Update order status
   const updateStatus = async (id, status) => {
     try {
       await api.put(`/orders/${id}`, { status });
 
-      alert("Order Status Updated");
-
+      alert("Order status updated");
       fetchOrders();
     } catch (error) {
       console.error(error);
-
-      alert(
-        error.response?.data?.message ||
-        "Failed to update status"
-      );
+      alert(error.response?.data?.message || "Failed to update order");
     }
   };
 
-  // Add pizza
   const handleAddPizza = async () => {
+    if (!name || !description || !image || !category) {
+      alert("Please fill all fields.");
+      return;
+    }
+
     try {
+      setAdding(true);
+
       const { data } = await api.post("/pizzas", {
         name,
         description,
@@ -73,40 +76,38 @@ function Admin() {
       fetchPizzas();
     } catch (error) {
       console.error(error);
-
-      alert(
-        error.response?.data?.message ||
-        "Failed to add pizza"
-      );
+      alert(error.response?.data?.message || "Failed to add pizza");
+    } finally {
+      setAdding(false);
     }
   };
 
-  // Delete pizza
   const handleDeletePizza = async (id) => {
+    if (!window.confirm("Delete this pizza?")) return;
+
     try {
       await api.delete(`/pizzas/${id}`);
 
       alert("Pizza deleted successfully");
 
-      fetchPizzas();
+      setPizzas((prev) => prev.filter((pizza) => pizza._id !== id));
     } catch (error) {
       console.error(error);
-
-      alert(
-        error.response?.data?.message ||
-        "Failed to delete pizza"
-      );
+      alert(error.response?.data?.message || "Failed to delete pizza");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-10">
+
       <h1 className="text-4xl font-bold mb-8">
         Admin Dashboard 👨‍🍳
       </h1>
 
       {/* Add Pizza */}
+
       <div className="bg-white p-6 rounded-xl shadow-md max-w-lg">
+
         <input
           type="text"
           placeholder="Pizza Name"
@@ -143,82 +144,82 @@ function Admin() {
 
         <button
           onClick={handleAddPizza}
-          className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600"
+          disabled={adding}
+          className="w-full bg-green-500 text-white py-3 rounded-lg hover:bg-green-600 disabled:bg-gray-400"
         >
-          Add Pizza
+          {adding ? "Adding..." : "Add Pizza"}
         </button>
+
       </div>
 
       {/* Orders */}
+
       <h2 className="text-3xl font-bold mt-10 mb-5">
         Order Management 📦
       </h2>
 
-      <div className="space-y-4">
-        {orders.map((order) => (
-          <div
-            key={order._id}
-            className="bg-white p-4 rounded-lg shadow"
-          >
-            <p>
-              <strong>Order ID:</strong> {order._id}
-            </p>
-
-            <p>
-              <strong>Total:</strong> ₹{order.totalPrice}
-            </p>
-
-            <p>
-              <strong>Address:</strong> {order.address}
-            </p>
-
-            <p>
-              <strong>Status:</strong>
-            </p>
-
-            <select
-              value={order.status}
-              onChange={(e) =>
-                updateStatus(order._id, e.target.value)
-              }
-              className="border p-2 rounded mt-2"
+      {orders.length === 0 ? (
+        <p className="text-gray-500">No orders available.</p>
+      ) : (
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              className="bg-white p-4 rounded-lg shadow"
             >
-              <option value="Pending">Pending</option>
-              <option value="Preparing">Preparing</option>
-              <option value="Delivered">Delivered</option>
-            </select>
-          </div>
-        ))}
-      </div>
+              <p><strong>Order ID:</strong> {order._id}</p>
+              <p><strong>Total:</strong> ₹{order.totalPrice}</p>
+              <p><strong>Address:</strong> {order.address}</p>
+
+              <select
+                value={order.status}
+                onChange={(e) =>
+                  updateStatus(order._id, e.target.value)
+                }
+                className="border p-2 rounded mt-3"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Preparing">Preparing</option>
+                <option value="Delivered">Delivered</option>
+              </select>
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Pizza Catalogue */}
+
       <h2 className="text-3xl font-bold mt-10 mb-5">
         Pizza Catalogue 🍕
       </h2>
 
-      <div className="space-y-4">
-        {pizzas.map((pizza) => (
-          <div
-            key={pizza._id}
-            className="bg-white p-4 rounded-lg shadow flex justify-between items-center"
-          >
-            <div>
-              <h3 className="font-bold text-xl">
-                {pizza.name}
-              </h3>
-
-              <p>{pizza.category}</p>
-            </div>
-
-            <button
-              onClick={() => handleDeletePizza(pizza._id)}
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+      {loading ? (
+        <p>Loading pizzas...</p>
+      ) : pizzas.length === 0 ? (
+        <p className="text-gray-500">No pizzas available.</p>
+      ) : (
+        <div className="space-y-4">
+          {pizzas.map((pizza) => (
+            <div
+              key={pizza._id}
+              className="bg-white p-4 rounded-lg shadow flex justify-between items-center"
             >
-              Delete
-            </button>
-          </div>
-        ))}
-      </div>
+              <div>
+                <h3 className="font-bold text-xl">{pizza.name}</h3>
+                <p>{pizza.category}</p>
+              </div>
+
+              <button
+                onClick={() => handleDeletePizza(pizza._id)}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
     </div>
   );
 }

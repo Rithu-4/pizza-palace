@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../api/axios";
 import PizzaCard from "../components/PizzaCard";
 import { CartContext } from "../context/CartContext";
 
@@ -10,27 +10,24 @@ function Home() {
   const [search, setSearch] = useState("");
 
   const { cart } = useContext(CartContext);
+  const navigate = useNavigate();
 
-  const user = JSON.parse(
-    localStorage.getItem("user")
-  );
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    localStorage.removeItem("cart");
 
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   const fetchPizzas = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/pizzas"
-      );
-
-      setPizzas(response.data.pizzas);
+      const { data } = await api.get("/pizzas");
+      setPizzas(data.pizzas || []);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -40,8 +37,7 @@ function Home() {
 
   const filteredPizzas = pizzas.filter((pizza) => {
     const categoryMatch =
-      category === "all" ||
-      pizza.category === category;
+      category === "all" || pizza.category === category;
 
     const searchMatch = pizza.name
       .toLowerCase()
@@ -63,7 +59,7 @@ function Home() {
         <div className="flex flex-wrap justify-center items-center gap-3">
 
           <h2 className="text-lg">
-            Welcome {user?.name} 👋
+            Welcome {user?.name || "Guest"} 👋
           </h2>
 
           <Link to="/cart">
@@ -92,7 +88,6 @@ function Home() {
           </button>
 
         </div>
-
       </div>
 
       {/* Search */}
@@ -108,13 +103,10 @@ function Home() {
 
       {/* Category Filter */}
       <div className="flex flex-wrap gap-4 px-4 mb-8">
-
         <button
           onClick={() => setCategory("all")}
           className={`px-4 py-2 rounded text-white ${
-            category === "all"
-              ? "bg-gray-800"
-              : "bg-black"
+            category === "all" ? "bg-gray-800" : "bg-black"
           }`}
         >
           All
@@ -123,9 +115,7 @@ function Home() {
         <button
           onClick={() => setCategory("veg")}
           className={`px-4 py-2 rounded text-white ${
-            category === "veg"
-              ? "bg-green-700"
-              : "bg-green-500"
+            category === "veg" ? "bg-green-700" : "bg-green-500"
           }`}
         >
           Veg
@@ -134,14 +124,11 @@ function Home() {
         <button
           onClick={() => setCategory("non-veg")}
           className={`px-4 py-2 rounded text-white ${
-            category === "non-veg"
-              ? "bg-red-700"
-              : "bg-red-500"
+            category === "non-veg" ? "bg-red-700" : "bg-red-500"
           }`}
         >
           Non-Veg
         </button>
-
       </div>
 
       {/* Pizza Section */}
