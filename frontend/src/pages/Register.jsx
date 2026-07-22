@@ -12,7 +12,7 @@ function Register() {
 
     try {
       const response = await axios.post(
-        "https://pizza-palace-4.onrender.com/api/auth/register",
+        "http://localhost:5000/api/users",
         {
           name,
           email,

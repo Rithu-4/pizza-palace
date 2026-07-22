@@ -15,7 +15,7 @@ function MyOrders() {
         );
 
         const response = await axios.get(
-          `https://pizza-palace-4.onrender.com/api/orders/${user.id}`
+          `http://localhost:5000/api/orders/${user.id}`
         );
 
         setOrders(response.data.orders);
@@ -33,7 +33,7 @@ function MyOrders() {
     try {
 
       await axios.delete(
-        `https://pizza-palace-4.onrender.com/api/orders/${id}`
+        `http://localhost:5000/api/orders/${id}`
       );
 
       setOrders(

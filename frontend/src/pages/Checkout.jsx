@@ -24,7 +24,7 @@ function Checkout() {
       );
 
       const response = await axios.post(
-        "https://pizza-palace-4.onrender.com/api/orders",
+        "http://localhost:5000/api/orders",
         {
           userId: user.id,
           items: cart,
