@@ -32,7 +32,7 @@ try {
 
 
   const response = await axios.get(
-    "http://localhost:5000/api/pizzas"
+    "https://pizza-palace-9.onrender.com/api/pizzas"
   );
 
   setPizzas(response.data.pizzas);
