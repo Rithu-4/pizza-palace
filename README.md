@@ -25,7 +25,7 @@ Pizza Palace is a full-stack food ordering web application built using the MERN 
 
 ## Live Demo
 
-Frontend: 
+https://pizza-palace-sage.vercel.app/ 
 
 ## GitHub Repository
 
