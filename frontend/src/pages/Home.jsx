@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { Menu, X } from "lucide-react";
 import PizzaCard from "../components/PizzaCard";
 import { CartContext } from "../context/CartContext";
 
@@ -9,7 +10,7 @@ function Home() {
 const [pizzas, setPizzas] = useState([]);
 const [category, setCategory] = useState("all");
 const [search, setSearch] = useState("");
-
+const [menuOpen, setMenuOpen] = useState(false);
 const { cart } = useContext(CartContext);
 
 const user = JSON.parse(
@@ -31,7 +32,7 @@ try {
 
 
   const response = await axios.get(
-    "https://pizza-palace-6.onrender.com/api/pizzas"
+    "http://localhost:5000/api/pizzas"
   );
 
   setPizzas(response.data.pizzas);
@@ -65,14 +66,17 @@ return categoryMatch && searchMatch;
 
 return ( <div className="bg-gray-100 min-h-screen">
 
-  {/* Navbar */}
-  <div className="bg-black text-white py-5 px-6 flex flex-col md:flex-row justify-between items-center gap-4 shadow-lg">
+ {/* Navbar */}
+<div className="bg-black text-white shadow-lg">
+
+  <div className="flex justify-between items-center px-6 py-5">
 
     <h1 className="text-3xl font-bold text-orange-500">
       Pizza Palace 🍕
     </h1>
 
-    <div className="flex flex-wrap justify-center items-center gap-3">
+    {/* Desktop Menu */}
+    <div className="hidden md:flex items-center gap-3">
 
       <h2 className="text-lg">
         Welcome {user?.name} 👋
@@ -91,10 +95,10 @@ return ( <div className="bg-gray-100 min-h-screen">
       </Link>
 
       <Link to="/admin">
-  <button className="bg-purple-500 px-5 py-2 rounded-lg hover:bg-purple-600">
-    Admin
-  </button>
-</Link>
+        <button className="bg-purple-500 px-5 py-2 rounded-lg hover:bg-purple-600">
+          Admin
+        </button>
+      </Link>
 
       <button
         onClick={handleLogout}
@@ -105,7 +109,69 @@ return ( <div className="bg-gray-100 min-h-screen">
 
     </div>
 
+    {/* Mobile Hamburger */}
+    <button
+      className="md:hidden"
+      onClick={() => setMenuOpen(!menuOpen)}
+    >
+      {menuOpen ? <X size={30} /> : <Menu size={30} />}
+    </button>
+
   </div>
+
+  {/* Mobile Menu */}
+  {menuOpen && (
+    <div className="md:hidden bg-gray-900 px-6 pb-5">
+
+      <h2 className="text-lg mb-4">
+        Welcome {user?.name} 👋
+      </h2>
+
+      <div className="flex flex-col gap-3">
+
+        <Link
+          to="/cart"
+          onClick={() => setMenuOpen(false)}
+        >
+          <button className="w-40 bg-orange-500 py-2 rounded-lg">
+            Cart ({cart.length})
+          </button>
+        </Link>
+
+        <Link
+          to="/orders"
+          onClick={() => setMenuOpen(false)}
+        >
+          <button className="w-40 bg-blue-500 py-2 rounded-lg">
+            My Orders
+          </button>
+        </Link>
+
+        <Link
+          to="/admin"
+          onClick={() => setMenuOpen(false)}
+        >
+          <button className="w-40 bg-purple-500 py-2 rounded-lg">
+            Admin
+          </button>
+        </Link>
+
+        <button
+          onClick={() => {
+            setMenuOpen(false);
+            handleLogout();
+          }}
+          className="w-40 bg-red-500 py-2 rounded-lg"
+        >
+          Logout
+        </button>
+
+      </div>
+
+    </div>
+  )}
+
+</div>
 
   {/* Search */}
   <div className="p-4">
@@ -201,4 +267,4 @@ return ( <div className="bg-gray-100 min-h-screen">
 );
 }
 
-export default Home;
+export default Home;  

@@ -16,7 +16,7 @@ try {
 
 
   const response = await axios.get(
-    "https://pizza-palace-6.onrender.com/api/pizzas"
+    "http://localhost:5000/api/pizzas"
   );
 
   setPizzas(response.data.pizzas);
@@ -37,7 +37,7 @@ const fetchOrders = async () => {
   try {
 
     const response = await axios.get(
-      "https://pizza-palace-6.onrender.com/api/orders"
+      "http://localhost:5000/api/orders"
     );
 
     setOrders(response.data.orders);
@@ -53,7 +53,7 @@ const updateStatus = async (id, status) => {
   try {
 
     await axios.put(
-      `https://pizza-palace-6.onrender.com/api/orders/${id}`,
+      `http://localhost:5000/api/orders/${id}`,
       { status }
     );
 
@@ -74,7 +74,7 @@ try {
   const token = localStorage.getItem("token");
 
   const response = await axios.post(
-    "https://pizza-palace-6.onrender.com/api/pizzas",
+    "http://localhost:5000/api/pizzas",
     {
       name,
       description,
@@ -118,7 +118,7 @@ try {
   const token = localStorage.getItem("token");
 
   await axios.delete(
-    `https://pizza-palace-4.onrender.com/api/pizzas/${id}`,
+    `http://localhost:5000/api/pizzas/${id}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
