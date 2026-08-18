@@ -1,7 +1,7 @@
 
 # 🍕 Pizza Palace
 
-Pizza Palace is a full-stack food ordering web application built using the MERN Stack (MongoDB, Express.js, React.js, and Node.js). The application allows users to browse pizzas, add items to their cart, register and log in securely, and place orders online through an intuitive and responsive interface.
+Pizza Palace is a full-stack food ordering web application built using the MERN Stack (MongoDB, Express.js, React.js, and Node.js). The application allows users to browse pizzas, add items to their cart, register and log in securely, and place orders online through an intuitive , online payment integration, Implemented RESTful APIs, MongoDB database integration, React Context API for state management, protected routes, and a responsive user interface.
 
 ## Features
 
@@ -25,7 +25,7 @@ Pizza Palace is a full-stack food ordering web application built using the MERN 
 
 ## Live Demo
 
-Frontend: 
+https://pizza-palace-sage.vercel.app/ 
 
 ## GitHub Repository
 
