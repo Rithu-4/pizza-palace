@@ -10,12 +10,16 @@ const {
 
 const router = express.Router();
 
+// CREATE ORDER
 router.post("/", createOrder);
 
+// GET ALL ORDERS
 router.get("/", getAllOrders);
 
+// GET USER ORDERS
 router.get("/:userId", getUserOrders);
 
+// UPDATE ORDER STATUS
 router.put("/:id", updateOrderStatus);
 
 // DELETE ORDER

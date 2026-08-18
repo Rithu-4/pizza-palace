@@ -8,28 +8,114 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    items: {
-      type: Array,
-      required: true,
+    customer: {
+      name: {
+        type: String,
+        required: true,
+      },
+
+      phone: {
+        type: String,
+        required: true,
+      },
+
+      address: {
+        type: String,
+        required: true,
+      },
+
+      city: {
+        type: String,
+        required: true,
+      },
+
+      pincode: {
+        type: String,
+        required: true,
+      },
     },
 
-    totalPrice: {
+    location: {
+      latitude: {
+        type: Number,
+      },
+
+      longitude: {
+        type: Number,
+      },
+    },
+
+    items: [
+      {
+        pizzaId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Pizza",
+        },
+
+        name: {
+          type: String,
+          required: true,
+        },
+
+        quantity: {
+          type: Number,
+          required: true,
+          min: 1,
+        },
+
+        price: {
+          type: Number,
+          required: true,
+        },
+
+        size: {
+          type: String,
+          default: null,
+        },
+      },
+    ],
+
+    subtotal: {
       type: Number,
       required: true,
     },
 
-    address: {
-      type: String,
+    deliveryFee: {
+      type: Number,
+      default: 0,
+    },
+
+    discount: {
+      type: Number,
+      default: 0,
+    },
+
+    total: {
+      type: Number,
       required: true,
     },
 
-    phoneNumber: {
+    paymentMethod: {
       type: String,
-      required: true,
+      default: "razorpay",
+    },
+
+    paymentStatus: {
+      type: String,
+      enum: ["Pending", "Paid", "Failed"],
+      default: "Pending",
     },
 
     status: {
       type: String,
+      enum: [
+        "Pending",
+        "Confirmed",
+        "Preparing",
+        "Out for Delivery",
+        "Delivered",
+        "Cancelled",
+      ],
       default: "Pending",
     },
   },

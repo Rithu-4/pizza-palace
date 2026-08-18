@@ -47,23 +47,23 @@ const getAllPizzas = async (req, res) => {
 try {
 
 
-const pizzas = await Pizza.find();
+const pizzas = await Pizza.find()
+  .select("name description category image sizes")
+  .lean();
 
 res.status(200).json({
   success: true,
   pizzas,
 });
 
-
 } catch (error) {
+    console.error("Get pizzas error:", error);
 
-res.status(500).json({
-  success: false,
-  message: error.message,
-});
-
-
-}
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch pizzas",
+    });
+  }
 };
 
 const updatePizza = async (req, res) => {
