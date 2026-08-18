@@ -30,7 +30,8 @@ function MyOrders() {
         console.log("Fetching orders for user:", userId);
 
         const response = await axios.get(
-          `https://pizza-palace-9.onrender.com/api/orders/${userId}`
+          `https://pizza-palace-10.onrender.com/api/orders/${userId}`
+          
         );
 
         console.log("Orders response:", response.data);
@@ -61,7 +62,7 @@ function MyOrders() {
   const handleDeleteOrder = async (id) => {
     try {
       await axios.delete(
-        `https://pizza-palace-9.onrender.com/api/orders/${id}`
+        `https://pizza-palace-10.onrender.com/api/orders/${id}`
       );
 
       setOrders((previousOrders) =>

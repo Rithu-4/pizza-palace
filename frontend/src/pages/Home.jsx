@@ -48,7 +48,7 @@ function Home() {
       setError("");
 
       const response = await axios.get(
-        "https://pizza-palace-9.onrender.com/api/pizzas",
+        "https://pizza-palace-10.onrender.com/api/pizzas",
         {
           timeout: 10000,
         }
@@ -102,7 +102,7 @@ function Home() {
 
       <nav className="sticky top-0 z-50 border-b border-white/10 bg-[#111111]/95 text-white shadow-xl backdrop-blur-xl">
 
-        <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 lg:px-8">
+        <div className="mx-auto flex h- 72px max-w-7xl items-center justify-between px-5 lg:px-8">
 
           {/* LOGO */}
 <Link

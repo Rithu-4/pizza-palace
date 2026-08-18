@@ -31,7 +31,7 @@ function Login() {
       setLoading(true);
 
       const response = await axios.post(
-        "https://pizza-palace-9.onrender.com/api/auth/login",
+        "https://pizza-palace-10.onrender.com/api/auth/login",
         {
           email,
           password,

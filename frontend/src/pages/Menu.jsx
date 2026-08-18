@@ -40,7 +40,7 @@ function Menu() {
       setError("");
 
       const response = await axios.get(
-        "https://pizza-palace-9.onrender.com/api/pizzas",
+        "https://pizza-palace-10.onrender.com/api/pizzas",
         {
           timeout: 10000,
         }
@@ -107,7 +107,7 @@ function Menu() {
             to="/"
             className="group flex items-center gap-3"
           >
-            <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-orange-400 via-orange-500 to-red-600 shadow-lg">
+            <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-linear-to-br from-orange-400 via-orange-500 to-red-600 shadow-lg">
 
               <div className="absolute inset- 3px rounded-xl border border-white/30"></div>
 
