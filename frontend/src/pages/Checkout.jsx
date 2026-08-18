@@ -457,7 +457,7 @@ function Checkout() {
 
             const savedOrderResponse =
               await axios.post(
-                `${API_URL}/orders`,
+                `${API_URL}/api/orders`,
                 {
                   ...orderData,
 
