@@ -24,7 +24,7 @@ import LocationPicker from "../components/LocationPicker";
 import { CartContext } from "../context/CartContext";
 
 const API_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  import.meta.env.VITE_API_URL || "https://pizza-palace-10.onrender.com";
 
 const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
