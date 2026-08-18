@@ -345,7 +345,7 @@ function Checkout() {
       // =================================================
 
       const response = await axios.post(
-        `${API_URL}/payment/create-order`,
+        `${API_URL}/api/payment/create-order`,
         {
           amount: total,
         }
@@ -436,7 +436,7 @@ function Checkout() {
             // =========================================
 
             const verifyResponse = await axios.post(
-              `${API_URL}/payment/verify`,
+              `${API_URL}/api/payment/verify`,
               paymentResponse
             );
 
